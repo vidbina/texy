@@ -1,0 +1,239 @@
+\input{doctypes/generic}
+%\usepackage{../.TeX/packages/reqs}
+
+\newcommand{\client}{NeedMe* }
+\newcommand{\product}{Key*\ }
+
+\begin{document}
+\SetWatermarkText{Confidential}
+\author{David Asabina\\\\
+  Engineer, Suprnovae \\
+  \url{mailto:david@suprnovae.com}\\
+  Rotterdam, Nederland
+}
+%\date{\today}
+\title{\textbf{Design}\\{KeyTag}}
+\maketitle
+\thispagestyle{empty}
+
+%\clearpage
+%\pagenumbering{roman}
+%\section*{Voorwoord}
+%\label{Voorwoord}
+%
+%\clearpage
+%\setcounter{page}{1}
+%%\setcounter{section}{1}
+%%\setcounter{subsection}{0}
+%\tableofcontents
+%\clearpage
+%\listoffigures
+%%\listoftables
+
+\clearpage
+\pagenumbering{arabic}
+\section{Introduction}
+\label{Introduction}
+Suprnovae is developing a product based on a concept proposed by Gerard Bakker \url{mailto:gerard@needme.nl}
+from NeedMe on February 21, 2012. The concept regards a product which assists the owner in locating a paired 
+device. The product will inversely allow the owner the possibility being located by utilizing 
+the feature as implemented on the paired device. 
+
+Besides the locating assist functionality, the product should offer the owner a minimal USB mass 
+storage capacity of 16 GB and be compact enough to function as a keyfob.
+
+\clearpage
+\section{Hardware}
+\subsection{Energy Consumption}
+A small energy usage profile will be necessary to render the product a viable candidate for the modern
+consumer electronics market. 
+
+%Assuming that current consumption during moments of moderate MCU an RF activity
+%amounts to \SIunits{30}{\milli\ampere}.
+For each battery the current supllyable for a entire year could be calculated 
+by solving expression \ref{Icont}.
+\begin{equation}
+	\label{Icont}
+	I_{continuous} \times t_{year} = C \times \frac{1}{24} \times \frac{1}{364.25}
+\end{equation}
+
+In order to minimize the current usage over time, the device can be designed 
+to operate with a fixed dutycycle ($D$), periodically activating the radio 
+and necessary peripherals for brief periods of time ($\tau$) and sleeping for 
+the remaining time of the respective period.
+\begin{equation}
+	D = \frac{\tau}{T}
+\end{equation}
+
+The continuous current consumable within a year period could be expressed in
+relation to the drawn current during activity ($I_{active}$) and the drawn 
+current while in sleep mode ($I_{sleep}$). In order to guarantee a single-charge
+life-time of at least a full calendar year, the product between the system's duty 
+cycle and current usage should not exceed the calculated continuous current to
+be drawn in a year (see expression \ref{dcyear}).
+\begin{equation}
+	\label{dcyear}
+	I_{cont} \times t_{year} \geq \frac{\tau}{T}\cdot I_{active} + \frac{T - \tau}{T}\cdot I_{sleep}
+\end{equation}
+
+\subsubsection{Energy Supplies}
+Form-factor, chemical construction and electrical properties of a selection of
+batteries are portrayed in table \ref{batterycomp} wherever this information 
+has been available. 
+%The requirements in relation to the form-factor of the product
+%demand a solution 
+
+\begin{table}[h!]
+	\begin{center}
+		\caption{Comparison of readily accessible battery-cells for mass production}
+		\label{batterycomp}
+		\begin{tabular}{lllrll}
+			\toprule
+			Name & Chemical & Electrical & Price & Rechargeable & Form Factor \\
+			\midrule
+			\href{http://www.google.com}{Varta V80H} & NiMh & \SIunits{80}{\milli\ampere\hour} @ \SIunits{1.2}{\volt} & \euro{3.25} & no & - \\
+			Sanyo 18650 Enerpower & Li-Ion & \SIunits{2600}{\milli\ampere\hour} @ \SIunits{3.7}{\volt} & \euro{14.50} & yes & - \\ % 
+			\href{http://www.alibaba.com/product-gs/523114211/li_polymer_rechargeable_battery.html}{SABC 703048} & Li-Polymer & \SIunits{1000}{\milli\ampere\hour} @ \SIunits{3.7}{\volt} & - & yes & \SIunits{7.3}{\milli\meter}x\SIunits{30}{\milli\meter}x\SIunits{48}{\milli\meter} \\ % http://www.alibaba.com/product-gs/523114211/li_polymer_rechargeable_battery.html/
+			\href{http://www.alibaba.com/product-gs/458961353/VERY_useful_High_power_LIR3048_Rechargeable.html}{Leson LIR3048} & Li-Ion & \SIunits{300}{\milli\ampere\hour} @ \SIunits{3.6}{\volt} & - & yes & \diameter \SIunits{30.5}{\milli\meter}x\SIunits{4.8}{\milli\meter} \\
+			\href{http://www.alibaba.com/product-gs/464442688/3_7V_Rechargeable_battery.html}{ZERNE 853440} & Li-Polymer & \SIunits{1100}{\milli\ampere} @ \SIunits{3.7}{\volt} & - & yes & \SIunits{8.5}{\milli\meter}x\SIunits{34}{\milli\meter}x\SIunits{40}{\milli\meter} \\
+			\href{http://www.alibaba.com/product-gs/464442688/3_7V_Rechargeable_battery.html}{XRHD XRHD453040} & Li-Polymer & \SIunits{520}{\milli\ampere\hour} @ \SIunits{3.7}{\volt} & - & yes & \SIunits{5.0}{\milli\meter}x\SIunits{52}{\milli\meter}x\SIunits{76}{\milli\meter} \\
+			\href{http://www.alibaba.com/product-gs/558977449/3_7V_rechargeable_battery_652020.html}{JK 652020} & Li-Ion & \SIunits{180}{\milli\ampere} @ \SIunits{3.7}{\volt} & - & yes & - \\
+			\bottomrule
+		\end{tabular}
+	\end{center}
+\end{table}
+\clearpage
+
+\subsubsection{Energy Demand}
+Table \ref{currentCC2571RF} and \ref{currentCC2571PowerModes} contain current 
+consumption data extracted from the datasheet of the CC2571 controller 
+\cite[p.4]{cc2541datasheet}. 
+
+During active operation with radio activity total current usage would be
+$<$ \SIunits{40}{\milli\ampere}.
+
+%Considering the fact that \client requires the device to be capable of operating
+%on a single charge in relation to the available battery-cell options available
+%leaves designers no other option but to operate the device at fixed duty-cycles.
+
+\begin{table}
+	\begin{center}
+		\caption{Current consumption during RF activity}
+		\label{currentCC2571RF}
+		\begin{tabular}{ll}
+			\toprule
+			Condition & Current Usage \\
+			\midrule
+			RX standard mode + low MCU activity & \SIunits{17.9}{\milli\ampere} \\
+			RX high-gain mode + low MCU activity & \SIunits{20.2}{\milli\ampere} \\
+			TX \SIunits{-20}{\deci\bel\meter} mode + low MCU activity & \SIunits{16.8}{\milli\ampere} \\
+			TX \SIunits{0}{\deci\bel\meter} mode + low MCU activity & \SIunits{18.2}{\milli\ampere} \\
+			\bottomrule
+		\end{tabular}
+	\end{center}
+\end{table}
+\begin{table}
+	\begin{center}
+		\caption{Current consumption of core during the Power Modes}
+		\label{currentCC2571PowerModes}
+		\begin{tabular}{ll}
+			\toprule
+			Condition & Current Usage \\
+			\midrule
+			Power mode 1: Digital regulator + \SIunits{32.768}{\kilo\hertz} XOSC + POR + TMR + RAM retention + flash retention & \SIunits{270}{\micro\ampere} \\
+			Power mode 2: \SIunits{32.768}{\kilo\hertz} XOSC + POR + TMR + RAM retention + flash retention & \SIunits{1}{\micro\ampere} \\
+			Power mode 3: POR + RAM retention + flash retention & \SIunits{0.5}{\micro\ampere} \\
+			\SIunits{32.768}{\kilo\hertz} XOSC + limited flash & \SIunits{6.7}{\milli\ampere} \\
+			\bottomrule
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}
+	\begin{center}
+		\caption{Estimated current consumption of hardware supplementary to core}
+		\label{currentsupest}
+		\begin{tabular}{ll}
+			\toprule
+			Peripheral & Current Usage \\
+			\midrule
+			Piezo element & \SIunits{7.5}{\milli\ampere} @ \SIunits{3.3}{\volt} \\
+			LED & \SIunits{15}{\milli\ampere} @ \SIunits{3.3}{\volt} \\
+			\bottomrule
+		\end{tabular}
+	\end{center}
+\end{table}
+\begin{table}
+	\begin{center}
+		\caption{Estimated leakage current for hardware supplementary to core}
+		\label{currentsupleak}
+		\begin{tabular}{ll}
+			\toprule
+			Peripheral & Current Usage \\
+			\midrule
+			Piezo leakage & \SIunits{1}{\milli\ampere} @ \SIunits{3.3}{\volt} \\
+			LED leakage & \SIunits{1}{\milli\ampere} @ \SIunits{3.3}{\volt} \\
+			Other & \SIunits{1}{\milli\ampere} @ \SIunits{3.3}{\volt} \\
+			\bottomrule
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\subsection{Subsystems}
+\subsubsection{Piezo Circuit}
+In order to generate sound a pi\"ezo element has been selected. These elements
+enable the generate of sharp audio signals at a relatively low energy cost.
+
+The Mallory Sonalert AST1240MLQ has been the only element in stock for delivery
+by Mouser during the design phase. All other options where either, too 
+expensive or didn't comply to the form-factor requirements. The AST1240MLQ is
+rated for operation at \SIunits{3}{\volt} peak-peak with maximum current
+consumption of \SIunits{5}{\milli\ampere}\cite{piezodatasheet}.
+
+The pi\"ezoelectric component will be shunted by a diode with a reverse 
+breakdown voltage of \SIunits{5}{\volt} to guard against the development 
+of unwanted voltage levels, may any stresses be exerted on the component.
+
+The CC2541 contains 21 \SIunits{4}{\milli\ampere} and 
+2 \SIunits{20}{\milli\ampere} IO pins. As a safety measure the entire 
+pi\"ezoelectric circuit should be designed considering a driving pin 
+supporting merely \SIunits{4}{\milli\ampere}.
+
+\begin{figure}[hbt]
+	\input{circuits/quick}
+	\centerline{\box\graph}
+	\caption{Customized caption}
+	\label{symlabelforquick}
+\end{figure}
+\begin{figure}[hbt]
+	\input{circuits/earphones}
+	\centerline{\box\graph}
+	\caption{Earphone caption}
+	\label{symlabelforearphone}
+\end{figure}
+\begin{figure}[hbt]
+	\input{circuits/test}
+	\centerline{\box\graph}
+	\caption{My first CM figure}
+	\label{symlabelforme}
+\end{figure}
+%A MOSFET requires a pull-up to determine the MOSFET idle state. The advantage
+%of the FET is that the entire driving circuit is purely voltage based.
+%
+A NPN BJT drives the pi\"ezoelectric element. The $\beta$ of the selected
+component varies between $200$ and $250$.
+%\bibliographystyle{apacite}
+%\bibliography{sources}
+\bibliography{../sources/sources}
+%\addcontentsline{toc}{section}{Referenties}
+\bibliographystyle{amsplain}
+
+%\clearpage
+%\renewcommand \thesection{\Roman{section}}
+%%\renewcommand \thesubsection{\roman{section}.\roman{subsection}.\roman{subsubsection}}
+%\addcontentsline{toc}{section}{Bijlages}
+%\setcounter{page}{1}
+%\setcounter{section}{1}
+%\setcounter{subsection}{0}
+%\includepdf[pages={1},landscape=true,lastpage=1,addtotoc={1,subsubsection,1,Title,schema-dig1}]{file.pdf}
+\end{document}

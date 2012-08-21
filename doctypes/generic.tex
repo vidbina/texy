@@ -1,0 +1,72 @@
+%!TEX TS-program = xelatex
+%!TEX encoding = UTF-8 Unicode
+\documentclass[10pt]{report}
+\usepackage{xltxtra,fontspec,xunicode}
+\defaultfontfeatures{Scale=MatchLowercase}
+%\setromanfont[Numbers=Uppercase]{Dosis}
+%\setmonofont[Scale=0.90,Ligatures=NoCommon]{Courier}
+\usepackage{amsmath, amscd}
+\usepackage{draftwatermark}
+%\usepackage{amssymb}
+\usepackage[final]{pdfpages}
+\usepackage{hyperref}
+\usepackage{verbatim}
+\usepackage{eurosym}
+\usepackage{booktabs}
+\usepackage{SIunits}
+\usepackage{wasysym}
+\usepackage{listings}
+%\usepackage[detect-weight=true,load-configurations=binary]{siunitx}
+%\usepackage{apacite}
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+%\renewcommand{\refname}{Literatuurlijst}
+%\usepackage{gnuplottex}
+\usepackage{graphicx, color}
+% laprint prerequisites
+\usepackage{graphicx, color, psfrag}
+% set lingual properties
+%\usepackage[dutch]{babel}
+\usepackage[english]{babel}
+%\usepackage[dutch=nohyphenation]{hyphsubst}
+\usepackage[toc]{glossaries}
+\usepackage{epstopdf}
+\usepackage{tikz}
+\usepackage[utf8]{inputenc}
+\usepackage{import}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+%\usepackage[none]{hyphenat}
+\newif\ifpdf
+\ifx\pdfoutput\undefined
+   \pdffalse
+\else
+   \pdfoutput=1
+   \pdftrue \fi
+\ifpdf
+   \usepackage{graphicx}
+   \usepackage{epstopdf}
+   \DeclareGraphicsRule{.eps}{pdf}{.pdf}{`epstopdf #1}
+   \pdfcompresslevel=9
+\else
+   \usepackage{graphicx}
+\fi
+% IMPORTING INKSCAPE
+\newcommand{\executeiffilenewer}[3]{%
+\ifnum\pdfstrcmp{\pdffilemoddate{#1}}%
+{\pdffilemoddate{#2}}>0%
+{\immediate\write18{#3}}\fi%
+}
+\newcommand{\includesvg}[1]{%
+\executeiffilenewer{#1.svg}{#1.pdf}%
+{inkscape -z -D --file=#1.svg %
+--export-pdf=#1.pdf --export-latex}%
+\input{#1.pdf_tex}%
+}
+\graphicspath{{graphics/}}

@@ -2,6 +2,7 @@ TEXtoDVI=xelatex
 DVItoPS=dvips
 PStoPDF=ps2pdf
 VIEWER=evince
+INKSCAPE=inkscape
 RM=rm -f
 M4=m4 -I
 GPIC=gpic -t

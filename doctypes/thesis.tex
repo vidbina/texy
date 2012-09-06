@@ -6,7 +6,7 @@
 %\setromanfont[Numbers=Uppercase]{Dosis}
 %\setmonofont[Scale=0.90,Ligatures=NoCommon]{Courier}
 \usepackage{amsmath, amscd}
-\usepackage{draftwatermark}
+%\usepackage{draftwatermark}
 %\usepackage{amssymb}
 \usepackage[final]{pdfpages}
 \usepackage{appendix}
@@ -70,4 +70,7 @@
 --export-pdf=#1.pdf --export-latex}%
 \input{#1.pdf_tex}%
 }
+\newcommand{\net}[1]{$\emph{#1}$}
+\newcommand{\component}[1]{$\emph{#1}$}
+\newcommand{\netnot}[1]{$\overline{\mbox{\net{#1}}}$}
 \graphicspath{{graphics/}}
